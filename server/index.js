@@ -22,6 +22,7 @@ app.use(cors({ origin: process.env.CLIENT_URL || '*' }));
 app.use(express.json());
 
 app.use('/api/auth', require('./src/routes/auth'));
+app.use('/api/orgs', require('./src/routes/orgs'));
 
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok', app: 'StageCOMM API' });
