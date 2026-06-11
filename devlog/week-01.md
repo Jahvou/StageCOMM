@@ -78,3 +78,6 @@ causing mongoose to receive undefined. Fixed by matching the exact variable name
 - Begin frontend development in React Native + Expo
 - Build the production screen (performer alert UI)
 - Build the technician alert receive and clear UI
+
+## Excalidraw
+- https://excalidraw.com/#json=Ziu_bfddwbSwkldwZ_0c2,_do9C9QLNVuqxtPiytpL1ghttps://excalidraw.com/#json=Ziu_bfddwbSwkldwZ_0c2,_do9C9QLNVuqxtPiytpL1g
