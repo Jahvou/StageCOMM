@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   SafeAreaView,
   View,
@@ -7,34 +7,35 @@ import {
   ScrollView,
   Modal,
   StyleSheet,
-} from 'react-native';
-import { useAuth } from '../hooks/useAuth';
-import { useAlerts } from '../hooks/useAlerts';
-import { Ionicons } from '@expo/vector-icons';
+} from "react-native";
+import { useAuth } from "../hooks/useAuth";
+import { useAlerts } from "../hooks/useAlerts";
+import { Ionicons } from "@expo/vector-icons";
+import AlertButton from "../components/AlertButton";
 
 const DEFAULT_LAYOUT = [
   {
-    name: 'Mics',
+    name: "Mics",
     buttons: [
-      { label: 'Mic 1', actions: ['Feedback', 'Volume Up', 'Volume Down'] },
-      { label: 'Mic 2', actions: ['Feedback', 'Volume Up', 'Volume Down'] },
-      { label: 'Mic 3', actions: ['Feedback', 'Volume Up', 'Volume Down'] },
-      { label: 'Mic 4', actions: ['Feedback', 'Volume Up', 'Volume Down'] },
+      { label: "Mic 1", actions: ["Feedback", "Volume Up", "Volume Down"] },
+      { label: "Mic 2", actions: ["Feedback", "Volume Up", "Volume Down"] },
+      { label: "Mic 3", actions: ["Feedback", "Volume Up", "Volume Down"] },
+      { label: "Mic 4", actions: ["Feedback", "Volume Up", "Volume Down"] },
     ],
   },
   {
-    name: 'IEMs',
+    name: "IEMs",
     buttons: [
-      { label: 'IEM 1', actions: ['Too Loud', 'Too Quiet', 'No Signal'] },
-      { label: 'IEM 2', actions: ['Too Loud', 'Too Quiet', 'No Signal'] },
-      { label: 'IEM 3', actions: ['Too Loud', 'Too Quiet', 'No Signal'] },
+      { label: "IEM 1", actions: ["Too Loud", "Too Quiet", "No Signal"] },
+      { label: "IEM 2", actions: ["Too Loud", "Too Quiet", "No Signal"] },
+      { label: "IEM 3", actions: ["Too Loud", "Too Quiet", "No Signal"] },
     ],
   },
   {
-    name: 'Monitors',
+    name: "Monitors",
     buttons: [
-      { label: 'Mon 1', actions: ['Too Loud', 'Too Quiet', 'No Signal'] },
-      { label: 'Mon 2', actions: ['Too Loud', 'Too Quiet', 'No Signal'] },
+      { label: "Mon 1", actions: ["Too Loud", "Too Quiet", "No Signal"] },
+      { label: "Mon 2", actions: ["Too Loud", "Too Quiet", "No Signal"] },
     ],
   },
 ];
@@ -47,13 +48,15 @@ export default function ProductionScreen() {
 
   const isAlertActive = (section, button) => {
     return activeAlerts.some(
-      (a) => a.section === section && a.button === button && a.status === 'active'
+      (a) =>
+        a.section === section && a.button === button && a.status === "active",
     );
   };
 
   const getAlert = (section, button) => {
     return activeAlerts.find(
-      (a) => a.section === section && a.button === button && a.status === 'active'
+      (a) =>
+        a.section === section && a.button === button && a.status === "active",
     );
   };
 
@@ -79,11 +82,16 @@ export default function ProductionScreen() {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Production</Text>
         <View style={styles.headerRight}>
-  <View style={[styles.statusDot, { backgroundColor: connected ? '#22c55e' : '#ef4444' }]} />
-  <TouchableOpacity onPress={logout}>
-    <Ionicons name="person-circle-outline" size={28} color="#888" />
-  </TouchableOpacity>
-</View>
+          <View
+            style={[
+              styles.statusDot,
+              { backgroundColor: connected ? "#22c55e" : "#ef4444" },
+            ]}
+          />
+          <TouchableOpacity onPress={logout}>
+            <Ionicons name="person-circle-outline" size={28} color="#888" />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <ScrollView contentContainerStyle={styles.scroll}>
@@ -94,18 +102,13 @@ export default function ProductionScreen() {
               {section.buttons.map((button) => {
                 const active = isAlertActive(section.name, button.label);
                 return (
-                  <TouchableOpacity
+                  <AlertButton
                     key={button.label}
-                    style={[styles.alertButton, active && styles.alertButtonActive]}
+                    label={button.label}
+                    action={getAlert(section.name, button.label)?.action}
+                    active={active}
                     onPress={() => handleButtonPress(section, button)}
-                  >
-                    <Text style={[styles.alertButtonText, active && styles.alertButtonTextActive]}>
-                      {button.label}
-                    </Text>
-                    {active && <Text style={styles.alertAction}>
-                      {getAlert(section.name, button.label)?.action}
-                    </Text>}
-                  </TouchableOpacity>
+                  />
                 );
               })}
             </View>
@@ -161,107 +164,107 @@ export default function ProductionScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0f0f1a' },
+  container: { flex: 1, backgroundColor: "#0f0f1a" },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#333',
+    borderBottomColor: "#333",
   },
-  headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#fff' },
+  headerTitle: { fontSize: 20, fontWeight: "bold", color: "#fff" },
   statusDot: { width: 10, height: 10, borderRadius: 5 },
   scroll: { padding: 16 },
   section: { marginBottom: 24 },
   sectionTitle: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#888',
+    fontWeight: "600",
+    color: "#888",
     marginBottom: 12,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
     letterSpacing: 1,
   },
   buttonGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 10,
   },
   alertButton: {
-    width: '47%',
-    backgroundColor: '#1e1e2e',
+    width: "47%",
+    backgroundColor: "#1e1e2e",
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#333',
-    alignItems: 'center',
+    borderColor: "#333",
+    alignItems: "center",
   },
   alertButtonActive: {
-    backgroundColor: '#3b0000',
-    borderColor: '#ef4444',
+    backgroundColor: "#3b0000",
+    borderColor: "#ef4444",
   },
   alertButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   alertButtonTextActive: {
-    color: '#ef4444',
+    color: "#ef4444",
   },
   alertAction: {
-    color: '#ef4444',
+    color: "#ef4444",
     fontSize: 11,
     marginTop: 4,
   },
   alertsList: { marginTop: 8, marginBottom: 24 },
   alertItem: {
-    backgroundColor: '#1e1e2e',
+    backgroundColor: "#1e1e2e",
     borderRadius: 10,
     padding: 14,
     marginBottom: 8,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     borderWidth: 1,
-    borderColor: '#ef4444',
+    borderColor: "#ef4444",
   },
-  alertItemText: { color: '#fff', fontSize: 14, flex: 1 },
-  clearText: { color: '#22c55e', fontWeight: 'bold', fontSize: 14 },
+  alertItemText: { color: "#fff", fontSize: 14, flex: 1 },
+  clearText: { color: "#22c55e", fontWeight: "bold", fontSize: 14 },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.7)',
-    justifyContent: 'flex-end',
+    backgroundColor: "rgba(0,0,0,0.7)",
+    justifyContent: "flex-end",
   },
   modalBox: {
-    backgroundColor: '#1e1e2e',
+    backgroundColor: "#1e1e2e",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 24,
   },
   modalTitle: {
     fontSize: 22,
-    fontWeight: 'bold',
-    color: '#fff',
-    textAlign: 'center',
+    fontWeight: "bold",
+    color: "#fff",
+    textAlign: "center",
     marginBottom: 4,
   },
   modalSubtitle: {
     fontSize: 14,
-    color: '#888',
-    textAlign: 'center',
+    color: "#888",
+    textAlign: "center",
     marginBottom: 20,
   },
   actionButton: {
-    backgroundColor: '#4f46e5',
+    backgroundColor: "#4f46e5",
     borderRadius: 10,
     padding: 16,
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 10,
   },
-  headerRight: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  
-  actionButtonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
-  cancelButton: { padding: 16, alignItems: 'center' },
-  cancelText: { color: '#888', fontSize: 16 },
+  headerRight: { flexDirection: "row", alignItems: "center", gap: 12 },
+
+  actionButtonText: { color: "#fff", fontSize: 16, fontWeight: "600" },
+  cancelButton: { padding: 16, alignItems: "center" },
+  cancelText: { color: "#888", fontSize: 16 },
 });
