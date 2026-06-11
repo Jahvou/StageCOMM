@@ -23,6 +23,7 @@ app.use(express.json());
 
 app.use('/api/auth', require('./src/routes/auth'));
 app.use('/api/orgs', require('./src/routes/orgs'));
+app.use('/api/layouts', require('./src/routes/layouts'));
 
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok', app: 'StageCOMM API' });
