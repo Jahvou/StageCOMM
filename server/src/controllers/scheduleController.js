@@ -1,0 +1,81 @@
+const Schedule = require('../models/Schedule');
+
+// @route  POST /api/schedule
+// @access Private
+const createSchedule = async (req, res) => {
+  try {
+    const { name, items } = req.body;
+    const schedule = await Schedule.create({
+      name,
+      org: req.user.org,
+      createdBy: req.user._id,
+      items: items || [],
+    });
+    res.status(201).json(schedule);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+// @route  GET /api/schedule
+// @access Private
+const getSchedules = async (req, res) => {
+  try {
+    const schedules = await Schedule.find({ org: req.user.org }).sort({ createdAt: -1 });
+    res.status(200).json(schedules);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+// @route  GET /api/schedule/:id
+// @access Private
+const getScheduleById = async (req, res) => {
+  try {
+    const schedule = await Schedule.findById(req.params.id);
+    if (!schedule) return res.status(404).json({ message: 'Schedule not found' });
+    if (schedule.org.toString() !== req.user.org.toString()) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+    res.status(200).json(schedule);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+// @route  PUT /api/schedule/:id
+// @access Private
+const updateSchedule = async (req, res) => {
+  try {
+    const schedule = await Schedule.findById(req.params.id);
+    if (!schedule) return res.status(404).json({ message: 'Schedule not found' });
+    if (schedule.org.toString() !== req.user.org.toString()) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+    const { name, items } = req.body;
+    if (name) schedule.name = name;
+    if (items) schedule.items = items;
+    const updated = await schedule.save();
+    res.status(200).json(updated);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+// @route  DELETE /api/schedule/:id
+// @access Private
+const deleteSchedule = async (req, res) => {
+  try {
+    const schedule = await Schedule.findById(req.params.id);
+    if (!schedule) return res.status(404).json({ message: 'Schedule not found' });
+    if (schedule.org.toString() !== req.user.org.toString()) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+    await schedule.deleteOne();
+    res.status(200).json({ message: 'Schedule deleted' });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+module.exports = { createSchedule, getSchedules, getScheduleById, updateSchedule, deleteSchedule };
