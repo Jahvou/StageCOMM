@@ -5,6 +5,7 @@ import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import { ActivityIndicator, View } from "react-native";
 import HomeScreen from "./screens/HomeScreen";
+import MainTabs from "./screens/MainTabs";
 
 const Stack = createNativeStackNavigator();
 
@@ -21,7 +22,7 @@ function AppNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {user ? (
-        <Stack.Screen name="Main" component={HomeScreen} />
+        <Stack.Screen name="Main" component={MainTabs} />
       ) : (
         <>
           <Stack.Screen name="Login" component={LoginScreen} />
