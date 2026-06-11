@@ -8,7 +8,6 @@ const api = axios.create({
     baseURL: BASE_URL,
     timeout: 8000,
 });
-console.log('API BASE_URL:', BASE_URL);
 
 // attach jwt token to each request
 export const setAuthToken = (token) => {

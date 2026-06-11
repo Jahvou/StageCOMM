@@ -6,7 +6,6 @@ export const useAlerts = (user) => {
     const [connected, setConnected] = useState(false);
 
     useEffect(() => {
-        console.log('useAlerts user:', JSON.stringify(user));
         if (!user?.org) return;
 
         // connect and join org room
