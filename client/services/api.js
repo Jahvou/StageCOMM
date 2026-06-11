@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const BASE_URL = __DEV__
-    ? 'http://192.168.2.100:3000'
+    ? 'http://192.168.2.20:3000'
     : 'https://api.stagecomm.com';
 
 const api = axios.create({

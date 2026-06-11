@@ -1,0 +1,73 @@
+import { useState, useEffect } from 'react';
+import socket from '../services/socket';
+
+export const useAlerts = (user) => {
+    const [activeAlerts, setActiveAlerts] = useState([]);
+    const [connected, setConnected] = useState(false);
+
+    useEffect(() => {
+        console.log('useAlerts user:', JSON.stringify(user));
+        if (!user?.org) return;
+
+        // connect and join org room
+        socket.connect();
+
+        socket.on('connect', () => {
+            setConnected(true);
+            socket.emit('join_org', user.org);
+            socket.emit('get_active_alerts', { orgId: user.org });
+        });
+
+        // New alert received
+        socket.on('new_alert', (alert) => {
+            setActiveAlerts((prev) => [alert, ...prev]);
+        });
+
+        // Alert cleared
+        socket.on('alert_cleared', (updated) => {
+            setActiveAlerts((prev) =>
+                prev.filter((a) => a._id !== updated._id)
+            );
+        });
+
+        // Load exsisting active alerts
+        socket.on('active_alerts', (alerts) => {
+            setActiveAlerts(alerts);
+        });
+
+        socket.on('disconnect', () => {
+            setConnected(false);
+        });
+
+        return () => {
+            socket.off('connect');
+            socket.off('new_alert');
+            socket.off('alert_cleared');
+            socket.off('active_alerts');
+            socket.off('disconnect');
+            socket.disconnect();
+        };
+    }, [user]);
+
+    const sendAlert = (section, button, action) => {
+        if (!user?.org) return;
+        socket.emit('send_alert', {
+            orgId: user.org,
+            sentBy: user._id,
+            section,
+            button,
+            action,
+        });
+    };
+
+    const clearAlert = (alertId) => {
+        if (!user?.org) return;
+        socket.emit('clear_alert', {
+            alertId,
+            clearedBy: user._id,
+            orgId: user.org,
+        });
+    };
+
+    return { activeAlerts, connected, sendAlert, clearAlert };
+}

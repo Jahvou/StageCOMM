@@ -25,6 +25,7 @@ const register = async (req, res) => {
             name: user.name,
             email: user.email,
             role: user.role,
+            org: user.org,
             token: generateToken(user._id),
         });
         } catch (err) {
@@ -54,6 +55,7 @@ const login = async (req, res) => {
             name: user.name,
             email: user.email,
             role: user.role,
+            org: user.org,
             token: generateToken(user._id),
         });
     } catch (err) {
