@@ -19,7 +19,6 @@ export const AuthProvider = ({ children }) => {
           setUser(JSON.parse(userData));
         }
       } catch (err) {
-        console.log("Failed to load user from Storage:", err.message);
       } finally {
         setLoading(false);
       }
@@ -34,6 +33,7 @@ export const AuthProvider = ({ children }) => {
       body: JSON.stringify({ name, email, password }),
     });
     const data = await res.json();
+    console.log('register response:' , data, 'status:', res.status);
     if (!res.ok) throw new Error(data.message);
     const { token, ...userData } = data;
     await AsyncStorage.setItem("token", token);
