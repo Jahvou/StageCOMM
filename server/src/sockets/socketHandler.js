@@ -1,4 +1,5 @@
 const registerAlertEvents = require('./alertEvents');
+const registerChatEvents = require('./ChatEvents');
 
 const registerSocketHandlers = (io) => {
     io.on('connection', (socket) => {
@@ -10,6 +11,7 @@ const registerSocketHandlers = (io) => {
         });
         
         registerAlertEvents(io, socket);
+        registerChatEvents(io, socket);
         socket.on('disconnect', () => {
             console.log('socket disconnected:', socket.id);
         });
