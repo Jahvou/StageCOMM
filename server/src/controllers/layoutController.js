@@ -22,7 +22,7 @@ const createLayout = async (req, res) => {
 
 const getLayouts = async (req, res) => {
     try {
-        const layouts = await LAyout.find({ org: req.user.org });
+        const layouts = await Layout.find({ org: req.user.org });
         res.status(200).json(layouts);
     }catch (err) {
         res.status(500).json({ message: 'Server error', error: err.message });
@@ -78,10 +78,10 @@ const deleteLayout = async (req, res) => {
     try {
         const layout = await Layout.findById(req.params.id);
         if (!layout) {
-            return res.status(404).json({ message: ' Layout not fpund '});
+            return res.status(404).json({ message: ' Layout not found '});
         }
 
-        if (layout.otg.toString() !== req.user.org.toString()) {
+        if (layout.org.toString() !== req.user.org.toString()) {
             return res.status(403).json({ message: ' Not authorized ' });
         }
 

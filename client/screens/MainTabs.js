@@ -1,9 +1,10 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from '@expo/vector-icons';
-import ProductionScreen from './ProductionScreen';
-import ChatScreen from './ChatScreen';
-import ScheduleScreen from './ScheduleScreen';
-import PeopleScreen from './PeopleScreen';
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Ionicons } from "@expo/vector-icons";
+import ProductionScreen from "./ProductionScreen";
+import ChatScreen from "./ChatScreen";
+import ScheduleScreen from "./ScheduleScreen";
+import PeopleScreen from "./PeopleScreen";
+import LayoutScreen from "./LayoutScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -13,11 +14,11 @@ export default function MainTabs() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: '#1e1e2e',
-          borderTopColor: '#333',
+          backgroundColor: "#1e1e2e",
+          borderTopColor: "#333",
         },
-        tabBarActiveTintColor: '#4f46e5',
-        tabBarInactiveTintColor: '#888',
+        tabBarActiveTintColor: "#4f46e5",
+        tabBarInactiveTintColor: "#888",
       }}
     >
       <Tab.Screen
@@ -26,6 +27,16 @@ export default function MainTabs() {
         options={{
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="radio-outline" color={color} size={size} />
+          ),
+        }}
+      />
+
+      <Tab.Screen
+        name="Layout"
+        component={LayoutScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="grid-outline" color={color} size={size} />
           ),
         }}
       />

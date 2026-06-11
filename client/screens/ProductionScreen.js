@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import {
   SafeAreaView,
   View,
@@ -12,6 +12,8 @@ import { useAuth } from "../hooks/useAuth";
 import { useAlerts } from "../hooks/useAlerts";
 import { Ionicons } from "@expo/vector-icons";
 import AlertButton from "../components/AlertButton";
+import { useFocusEffect } from '@react-navigation/native';
+import api from '../services/api';
 
 const DEFAULT_LAYOUT = [
   {
@@ -45,6 +47,36 @@ export default function ProductionScreen() {
   const { activeAlerts, connected, sendAlert, clearAlert } = useAlerts(user);
   const [selectedButton, setSelectedButton] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [layout, setLayout] = useState(DEFAULT_LAYOUT);
+  const [layoutLoading, setLayoutLoading] = useState(true);
+
+  useFocusEffect(
+    useCallback(() => {
+      const loadLayout = async () => {
+        try {
+          const res = await api.get('/api/layouts');
+          const active = res.data.find((l) => l.isActive);
+          if (active && active.sections.length > 0) {
+            const converted = active.sections.map((section) => ({
+              name: section.name,
+              buttons: section.buttons.map((button) => ({
+                label: button.label,
+                actions: button.actions.map((a) => a.label),
+              })),
+            }));
+            setLayout(converted);
+          } else {
+            setLayout(DEFAULT_LAYOUT);
+          }
+        } catch (err) {
+          console.log('Failed to load layout:', err.message);
+        } finally {
+          setLayoutLoading(false);
+        }
+      };
+      loadLayout();
+    }, [])
+  );
 
   const isAlertActive = (section, button) => {
     return activeAlerts.some(
@@ -95,7 +127,7 @@ export default function ProductionScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.scroll}>
-        {DEFAULT_LAYOUT.map((section) => (
+        {layout.map((section) => (
           <View key={section.name} style={styles.section}>
             <Text style={styles.sectionTitle}>{section.name}</Text>
             <View style={styles.buttonGrid}>
@@ -191,32 +223,6 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: 10,
   },
-  alertButton: {
-    width: "47%",
-    backgroundColor: "#1e1e2e",
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: "#333",
-    alignItems: "center",
-  },
-  alertButtonActive: {
-    backgroundColor: "#3b0000",
-    borderColor: "#ef4444",
-  },
-  alertButtonText: {
-    color: "#fff",
-    fontSize: 15,
-    fontWeight: "600",
-  },
-  alertButtonTextActive: {
-    color: "#ef4444",
-  },
-  alertAction: {
-    color: "#ef4444",
-    fontSize: 11,
-    marginTop: 4,
-  },
   alertsList: { marginTop: 8, marginBottom: 24 },
   alertItem: {
     backgroundColor: "#1e1e2e",
@@ -263,7 +269,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   headerRight: { flexDirection: "row", alignItems: "center", gap: 12 },
-
   actionButtonText: { color: "#fff", fontSize: 16, fontWeight: "600" },
   cancelButton: { padding: 16, alignItems: "center" },
   cancelText: { color: "#888", fontSize: 16 },
