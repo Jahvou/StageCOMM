@@ -93,6 +93,7 @@ export default function LayoutScreen({ navigation }) {
 
   const createLayout = async () => {
     if (!layoutName.trim()) return;
+    console.log('creating layout, user org:', user?.org, 'user id:', user?._id);
     try {
       const res = await api.post('/api/layouts', { name: layoutName, sections: [] });
       setLayouts((prev) => [DEFAULT_LAYOUT_OPTION, res.data, ...prev.filter((l) => l._id !== 'default')]);

@@ -6,52 +6,51 @@ export const useAlerts = (user) => {
     const [connected, setConnected] = useState(false);
 
     useEffect(() => {
-        if (!user?.org) return;
+      const roomId = user?.org || user?._id;
+      if (!roomId) return;
 
-        // connect and join org room
-        socket.connect();
+      // connect and join org room
+      socket.connect();
 
-        socket.on('connect', () => {
-            setConnected(true);
-            socket.emit('join_org', user.org);
-            socket.emit('get_active_alerts', { orgId: user.org });
-        });
+      socket.on("connect", () => {
+        setConnected(true);
+        socket.emit("join_org", roomId);
+        socket.emit("get_active_alerts", { orgId: roomId });
+      });
 
-        // New alert received
-        socket.on('new_alert', (alert) => {
-            setActiveAlerts((prev) => [alert, ...prev]);
-        });
+      // New alert received
+      socket.on("new_alert", (alert) => {
+        setActiveAlerts((prev) => [alert, ...prev]);
+      });
 
-        // Alert cleared
-        socket.on('alert_cleared', (updated) => {
-            setActiveAlerts((prev) =>
-                prev.filter((a) => a._id !== updated._id)
-            );
-        });
+      // Alert cleared
+      socket.on("alert_cleared", (updated) => {
+        setActiveAlerts((prev) => prev.filter((a) => a._id !== updated._id));
+      });
 
-        // Load exsisting active alerts
-        socket.on('active_alerts', (alerts) => {
-            setActiveAlerts(alerts);
-        });
+      // Load exsisting active alerts
+      socket.on("active_alerts", (alerts) => {
+        setActiveAlerts(alerts);
+      });
 
-        socket.on('disconnect', () => {
-            setConnected(false);
-        });
+      socket.on("disconnect", () => {
+        setConnected(false);
+      });
 
-        return () => {
-            socket.off('connect');
-            socket.off('new_alert');
-            socket.off('alert_cleared');
-            socket.off('active_alerts');
-            socket.off('disconnect');
-            socket.disconnect();
-        };
+      return () => {
+        socket.off("connect");
+        socket.off("new_alert");
+        socket.off("alert_cleared");
+        socket.off("active_alerts");
+        socket.off("disconnect");
+        socket.disconnect();
+      };
     }, [user]);
 
     const sendAlert = (section, button, action) => {
         if (!user?.org) return;
         socket.emit('send_alert', {
-            orgId: user.org,
+            orgId: user?.org || user?._id,
             sentBy: user._id,
             section,
             button,
@@ -64,7 +63,7 @@ export const useAlerts = (user) => {
         socket.emit('clear_alert', {
             alertId,
             clearedBy: user._id,
-            orgId: user.org,
+            orgId: user?.org || user?._id,
         });
     };
 

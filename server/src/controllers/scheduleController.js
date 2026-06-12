@@ -7,7 +7,7 @@ const createSchedule = async (req, res) => {
     const { name, items } = req.body;
     const schedule = await Schedule.create({
       name,
-      org: req.user.org,
+      org: req.user.org || req.user._id,
       createdBy: req.user._id,
       items: items || [],
     });
@@ -21,7 +21,7 @@ const createSchedule = async (req, res) => {
 // @access Private
 const getSchedules = async (req, res) => {
   try {
-    const schedules = await Schedule.find({ org: req.user.org }).sort({ createdAt: -1 });
+    const schedules = await Schedule.find({ org: req.user.org || req.user._id }).sort({ createdAt: -1 });
     res.status(200).json(schedules);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });

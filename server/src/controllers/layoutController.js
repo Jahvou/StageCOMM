@@ -8,7 +8,7 @@ const createLayout = async (req, res) => {
 
         const layout = await Layout.create({
             name,
-            org: req.user.org,
+            org: req.user.org || req.user._id,
             createdBy: req.user._id,
             sections: sections || [],
         });
@@ -22,7 +22,7 @@ const createLayout = async (req, res) => {
 
 const getLayouts = async (req, res) => {
     try {
-        const layouts = await Layout.find({ org: req.user.org });
+        const layouts = await Layout.find({ org: req.user.org || req.user._id });
         res.status(200).json(layouts);
     }catch (err) {
         res.status(500).json({ message: 'Server error', error: err.message });
@@ -38,7 +38,7 @@ const getLayoutById = async (req, res) => {
         }
 
         // Ensure the layout belongs to the user's organization
-        if (layout.org.toString() !== req.user.org.toString()) {
+        if (layout.org.toString() !== req.user.org.toString() && layout.org.toString() !== req.user._id.toString()) {
             return res.status(403).json({ message: ' Not authorized ' });
         }
 
