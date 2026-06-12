@@ -111,3 +111,5 @@ See the [`devlog/`](./devlog) folder for weekly progress updates.
 ## Deployment
 
 Backend deployed on Render: https://stagecomm.onrender.com
+
+frontend deployed on EXPO : https://expo.dev/preview/update?message=remove+broken+console.log&updateRuntimeVersion=1.0.0&createdAt=2026-06-12T04%3A10%3A46.371Z&slug=exp&projectId=4f654b8f-5f47-4a96-9535-f19b83508a8a&group=22659ef4-e3ff-42f4-ac7f-63c6b9ede3b8
