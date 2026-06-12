@@ -93,23 +93,16 @@ const joinOrg = async (req, res) => {
 //@access Private
 const getMyOrg = async (req, res) => {
   try {
-    const org = await Org.findById(req.user.org).populate(
-      "members.user",
-      "name email role",
-    );
     if (!req.user.org) {
       return res.status(200).json({ members: [] });
     }
-    const org = await Org.findById(req.user.org).populate(
-      "members.user",
-      "name email role",
-    );
-    if (!org) {
+    const orgData = await Org.findById(req.user.org).populate('members.user', 'name email role');
+    if (!orgData) {
       return res.status(200).json({ members: [] });
     }
-    res.status(200).json(org);
+    res.status(200).json(orgData);
   } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
+    res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
 
