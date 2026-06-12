@@ -78,22 +78,24 @@ export default function LayoutScreen({ navigation }) {
   }, []);
 
   const loadLayouts = async () => {
-    try {
-      const res = await api.get('/api/layouts');
-      const allLayouts = [DEFAULT_LAYOUT_OPTION, ...res.data];
-      setLayouts(allLayouts);
-      const active = allLayouts.find((l) => l.isActive) || DEFAULT_LAYOUT_OPTION;
-      setActiveLayout(active);
-    } catch (err) {
-      console.log('Failed to load layouts:', err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    const res = await api.get('/api/layouts');
+    const allLayouts = [DEFAULT_LAYOUT_OPTION, ...res.data];
+    setLayouts(allLayouts);
+    const active = allLayouts.find((l) => l.isActive) || DEFAULT_LAYOUT_OPTION;
+    setActiveLayout(active);
+  } catch (err) {
+    console.log('Failed to load layouts:', err.message);
+    setLayouts([DEFAULT_LAYOUT_OPTION]);
+    setActiveLayout(DEFAULT_LAYOUT_OPTION);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const createLayout = async () => {
     if (!layoutName.trim()) return;
-    console.log('creating layout, user org:', user?.org, 'user id:', user?._id);
+    console.log('create layout error:', err.message, err.response?.status, err.response?.data, err.config?.url, err.config?.headers);
     try {
       const res = await api.post('/api/layouts', { name: layoutName, sections: [] });
       setLayouts((prev) => [DEFAULT_LAYOUT_OPTION, res.data, ...prev.filter((l) => l._id !== 'default')]);
@@ -101,6 +103,7 @@ export default function LayoutScreen({ navigation }) {
       setLayoutName('');
       setCreateModalVisible(false);
     } catch (err) {
+      console.log('create layout error:', err.message, err.response?.data);
       Alert.alert('Error', err.message);
     }
   };
