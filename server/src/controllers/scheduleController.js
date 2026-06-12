@@ -1,7 +1,5 @@
 const Schedule = require('../models/Schedule');
 
-// @route  POST /api/schedule
-// @access Private
 const createSchedule = async (req, res) => {
   try {
     const { name, items } = req.body;
@@ -17,8 +15,6 @@ const createSchedule = async (req, res) => {
   }
 };
 
-// @route  GET /api/schedule
-// @access Private
 const getSchedules = async (req, res) => {
   try {
     const schedules = await Schedule.find({ org: req.user.org || req.user._id }).sort({ createdAt: -1 });
@@ -28,13 +24,13 @@ const getSchedules = async (req, res) => {
   }
 };
 
-// @route  GET /api/schedule/:id
-// @access Private
 const getScheduleById = async (req, res) => {
   try {
     const schedule = await Schedule.findById(req.params.id);
     if (!schedule) return res.status(404).json({ message: 'Schedule not found' });
-    if (schedule.org.toString() !== req.user.org.toString()) {
+    const scheduleOrg = schedule.org?.toString();
+    const userOrg = (req.user.org || req.user._id).toString();
+    if (scheduleOrg && scheduleOrg !== userOrg) {
       return res.status(403).json({ message: 'Not authorized' });
     }
     res.status(200).json(schedule);
@@ -43,13 +39,13 @@ const getScheduleById = async (req, res) => {
   }
 };
 
-// @route  PUT /api/schedule/:id
-// @access Private
 const updateSchedule = async (req, res) => {
   try {
     const schedule = await Schedule.findById(req.params.id);
     if (!schedule) return res.status(404).json({ message: 'Schedule not found' });
-    if (schedule.org.toString() !== req.user.org.toString()) {
+    const scheduleOrg = schedule.org?.toString();
+    const userOrg = (req.user.org || req.user._id).toString();
+    if (scheduleOrg && scheduleOrg !== userOrg) {
       return res.status(403).json({ message: 'Not authorized' });
     }
     const { name, items } = req.body;
@@ -62,13 +58,13 @@ const updateSchedule = async (req, res) => {
   }
 };
 
-// @route  DELETE /api/schedule/:id
-// @access Private
 const deleteSchedule = async (req, res) => {
   try {
     const schedule = await Schedule.findById(req.params.id);
     if (!schedule) return res.status(404).json({ message: 'Schedule not found' });
-    if (schedule.org.toString() !== req.user.org.toString()) {
+    const scheduleOrg = schedule.org?.toString();
+    const userOrg = (req.user.org || req.user._id).toString();
+    if (scheduleOrg && scheduleOrg !== userOrg) {
       return res.status(403).json({ message: 'Not authorized' });
     }
     await schedule.deleteOne();

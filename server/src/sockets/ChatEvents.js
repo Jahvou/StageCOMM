@@ -6,7 +6,8 @@ const registerChatEvents = (io, socket) => {
     socket.on('get_messages', async (data) => {
         try {
             const { orgId } = data;
-            const messages = await chat.find({ org: orgId })
+            const roomId = orgId || socket.id;
+            const messages = await Chat.find({ org: roomId })
             .sort({ createdAt: -1 })
             .limit(50)
             .populate('sentBy', 'name role');
@@ -21,16 +22,17 @@ const registerChatEvents = (io, socket) => {
      socket.on('send_message', async (data) => {
     try {
       const { orgId, sentBy, text } = data;
+      const roomId = orgId || sentBy;
 
       const message = await Chat.create({
-        org: orgId,
+        org: roomId,
         sentBy,
         text,
       });
 
       const populated = await message.populate('sentBy', 'name role');
 
-      io.to(orgId).emit('new_message', populated);
+      io.to(roomId).emit('new_message', populated);
     } catch (err) {
       socket.emit('chat_error', { message: err.message });
     }

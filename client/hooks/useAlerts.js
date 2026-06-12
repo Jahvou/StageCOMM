@@ -8,11 +8,13 @@ export const useAlerts = (user) => {
     useEffect(() => {
       const roomId = user?.org || user?._id;
       if (!roomId) return;
+      console.log('useAlerts connecting, roomId:', roomId);
 
       // connect and join org room
       socket.connect();
 
       socket.on("connect", () => {
+        console.log('socket connected successfully');
         setConnected(true);
         socket.emit("join_org", roomId);
         socket.emit("get_active_alerts", { orgId: roomId });
@@ -48,7 +50,8 @@ export const useAlerts = (user) => {
     }, [user]);
 
     const sendAlert = (section, button, action) => {
-        if (!user?.org) return;
+        const roomId = user?.org || user?._id;
+        if (!roomId) return;
         socket.emit('send_alert', {
             orgId: user?.org || user?._id,
             sentBy: user._id,
@@ -59,7 +62,8 @@ export const useAlerts = (user) => {
     };
 
     const clearAlert = (alertId) => {
-        if (!user?.org) return;
+        const roomId = user?.org || user?._id;
+        if (!roomId) return;
         socket.emit('clear_alert', {
             alertId,
             clearedBy: user._id,
