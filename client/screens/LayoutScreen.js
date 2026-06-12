@@ -95,7 +95,6 @@ export default function LayoutScreen({ navigation }) {
 
   const createLayout = async () => {
     if (!layoutName.trim()) return;
-    console.log('create layout error:', err.message, err.response?.status, err.response?.data, err.config?.url, err.config?.headers);
     try {
       const res = await api.post('/api/layouts', { name: layoutName, sections: [] });
       setLayouts((prev) => [DEFAULT_LAYOUT_OPTION, res.data, ...prev.filter((l) => l._id !== 'default')]);
