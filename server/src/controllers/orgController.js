@@ -27,29 +27,35 @@ const createOrg = async (req, res) => {
 // @route  POST /api/orgs/invite
 // @access Private
 const generateInvite = async (req, res) => {
-    try{
-        // find the organisation the user belongs to
-        const org = await Org.findById(req.user.org);
-        if (!org) {
-            return res.status(404).json({ message: 'Organisation not found' });
-        }
+  try {
+    const { email } = req.body;
 
-        // Generate random token and set expiry date to 24hrs from now
-        const token = crypto.randomBytes(20).toString('hex');
-        const expiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
-
-        org.inviteToken = token;
-        org.inviteTokenExpiry = expiry;
-        await org.save();
-
-        res.status(200).json({
-            inviteToken: token,
-            expiresAt: expiry,
-        });
-    } catch (err) {
-        res.status(500).json({ message: 'Server error', error: err.message });
+    const org = await Org.findById(req.user.org);
+    if (!org) {
+      return res.status(404).json({ message: 'Organisation not found' });
     }
+
+    const token = crypto.randomBytes(20).toString('hex');
+    const expiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+    org.inviteToken = token;
+    org.inviteTokenExpiry = expiry;
+    await org.save();
+
+    if (email) {
+      const { sendInviteEmail } = require('../services/inviteService');
+      await sendInviteEmail(email, org.name, token);
+    }
+
+    res.status(200).json({
+      inviteToken: token,
+      expiresAt: expiry,
+    });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
 };
+
 
 // @route  POST /api/orgs/join
 // @access Private

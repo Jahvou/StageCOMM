@@ -8,29 +8,45 @@ const generateToken = (id) => {
 
 // Register new user
 const register = async (req, res) => {
-    try {
-        const { name, email, password } = req.body;
+  try {
+    const { name, email, password, orgName } = req.body;
 
-        // Check if user already exists
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ message: 'Email already in use' });
-        }
-
-        // Create new user
-        const user = await User.create({ name, email, password });
-
-        res.status(201).json({
-            _id: user._id,
-            name: user.name,
-            email: user.email,
-            role: user.role,
-            org: user.org,
-            token: generateToken(user._id),
-        });
-        } catch (err) {
-        res.status(500).json({ message: 'Server error', error: err.message });
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Email already in use' });
     }
+
+    // Create user with admin role if creating an org
+    const user = await User.create({
+      name,
+      email,
+      password,
+      role: orgName ? 'admin' : 'performer',
+    });
+
+    // If orgName provided, create the org and link it to the user
+    if (orgName) {
+      const Org = require('../models/Org');
+      const org = await Org.create({
+        name: orgName,
+        createdBy: user._id,
+        members: [{ user: user._id, role: 'admin' }],
+      });
+      user.org = org._id;
+      await user.save();
+    }
+
+    res.status(201).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      org: user.org,
+      token: generateToken(user._id),
+    });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
 };
 
 // Login

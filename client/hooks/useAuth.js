@@ -8,7 +8,6 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // check for existing token
   useEffect(() => {
     const loadUser = async () => {
       try {
@@ -19,6 +18,7 @@ export const AuthProvider = ({ children }) => {
           setUser(JSON.parse(userData));
         }
       } catch (err) {
+        console.log("Failed to load user from storage:", err.message);
       } finally {
         setLoading(false);
       }
@@ -26,31 +26,18 @@ export const AuthProvider = ({ children }) => {
     loadUser();
   }, []);
 
-  const register = async (name, email, password) => {
-    const res = await fetch("http://192.168.2.20:3000/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password }),
-    });
-    const data = await res.json();
-    console.log('register response:' , data, 'status:', res.status);
-    if (!res.ok) throw new Error(data.message);
-    const { token, ...userData } = data;
-    await AsyncStorage.setItem("token", token);
-    await AsyncStorage.setItem("user", JSON.stringify(userData));
-    setAuthToken(token);
-    setUser(userData);
-  };
+  const register = async (name, email, password, orgName = null) => {
+  const res = await api.post("/api/auth/register", { name, email, password, orgName });
+  const { token, ...userData } = res.data;
+  await AsyncStorage.setItem("token", token);
+  await AsyncStorage.setItem("user", JSON.stringify(userData));
+  setAuthToken(token);
+  setUser(userData);
+};
 
   const login = async (email, password) => {
-    const res = await fetch("http://192.168.2.20:3000/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message);
-    const { token, ...userData } = data;
+    const res = await api.post("/api/auth/login", { email, password });
+    const { token, ...userData } = res.data;
     await AsyncStorage.setItem("token", token);
     await AsyncStorage.setItem("user", JSON.stringify(userData));
     setAuthToken(token);

@@ -21,10 +21,11 @@ export default function ChatScreen() {
   const flatListRef = useRef(null);
 
   useEffect(() => {
-    if (!user?.org) return;
+    const roomId = user?.org || user?._id; // Use org ID if available, otherwise use user ID
+    if (!roomId) return;
 
     // Load existing messages
-    socket.emit('get_messages', { orgId: user.org });
+    socket.emit('get_messages', { orgId: roomId });
 
     socket.on('messages_loaded', (msgs) => {
       setMessages(msgs);
@@ -41,9 +42,9 @@ export default function ChatScreen() {
   }, [user]);
 
   const sendMessage = () => {
-    if (!text.trim() || !user?.org) return;
+    if (!text.trim() || !user?._id) return;
     socket.emit('send_message', {
-      orgId: user.org,
+      orgId: user.org || user._id, // Use org ID if available, otherwise use user ID
       sentBy: user._id,
       text: text.trim(),
     });
