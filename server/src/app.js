@@ -19,7 +19,7 @@ app.use('/api/schedule', require('./routes/schedule'));
 
 app.get('/invite', (req, res) => {
   const token = req.query.token;
-  const expoUrl = `exp://u.expo.dev/4f654b8f-5f47-4a96-9535-f19b83508a8a/--/join?token=${token}`;
+ const expoUrl = `exp+stagecomm://join?token=${token}`;
   
   res.send(`
     <!DOCTYPE html>
