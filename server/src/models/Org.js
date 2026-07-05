@@ -20,7 +20,7 @@ const orgSchema = new mongoose.Schema(
                 },
                 role: {
                     type: String,
-                    enum: ['director', 'admin', 'stage_manager', 'technician', 'performer'],
+                    enum: ['director', 'admin', 'stage_manager', 'technician', 'performer', 'team_member'],
                     default: 'performer',
                 },
             },

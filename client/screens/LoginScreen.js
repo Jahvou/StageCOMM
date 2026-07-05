@@ -11,7 +11,8 @@ import {
 } from 'react-native';
 import { useAuth } from '../hooks/useAuth';
 
-export default function LoginScreen({ navigation }) {
+export default function LoginScreen({ navigation, route }) {
+
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -25,6 +26,11 @@ export default function LoginScreen({ navigation }) {
     try {
       setLoading(true);
       await login(email, password);
+      const pendingToken = route?.params?.pendingToken;
+if (pendingToken) {
+  navigation.navigate('JoinOrg', { token: pendingToken });
+}
+
     } catch (err) {
       Alert.alert('Login Failed', err.response?.data?.message || 'Something went wrong');
     } finally {

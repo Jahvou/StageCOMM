@@ -28,9 +28,10 @@ export default function JoinOrgScreen({ route, navigation }) {
       return;
     }
     if (!user) {
-      navigation.navigate('Register');
-      return;
-    }
+  navigation.navigate('Login', { pendingToken: token.trim() });
+  return;
+}
+
     try {
       setJoining(true);
       await api.post('/api/orgs/join', { token: token.trim(), role: 'team_member' });
