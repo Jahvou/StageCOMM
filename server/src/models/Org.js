@@ -25,14 +25,19 @@ const orgSchema = new mongoose.Schema(
                 },
             },
         ],
-        inviteToken: {
-            type: String,
-            default: null,
-        },
-        inviteTokenExpiry: {
-            type: Date,
-            default: null,
-        },
+       inviteToken: {
+  type: String,
+  default: null,
+},
+inviteTokenExpiry: {
+  type: Date,
+  default: null,
+},
+inviteTokenEmail: {
+  type: String,
+  default: null,
+},
+
     },
     { timestamps: true }
 );

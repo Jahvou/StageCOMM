@@ -41,7 +41,9 @@ const generateInvite = async (req, res) => {
 
     org.inviteToken = token;
     org.inviteTokenExpiry = expiry;
+    org.inviteTokenEmail = email;
     await org.save();
+
 
     if (email) {
       const { sendInviteEmail } = require('../services/inviteService');
@@ -69,6 +71,11 @@ const joinOrg = async (req, res) => {
         if (!org) {
             return res.status (400).json({ message: 'Invalit invite token' })
         }
+
+      if (org.inviteTokenEmail && org.inviteTokenEmail !== req.user.email) {
+        return res.status(403).json({ message: 'This invite was sent to a different email address' });
+      }
+
 
         // checking if token has expired
         if (org.inviteTokenExpiry < Date.now()) {
