@@ -6,6 +6,7 @@ import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import MainTabs from "./screens/MainTabs";
 import JoinOrgScreen from "./screens/JoinOrgScreen";
+import AccountScreen from "./screens/AccountScreen";
 import { ActivityIndicator, View } from "react-native";
 import * as Linking from "expo-linking";
 
@@ -30,6 +31,7 @@ function AppNavigator() {
         <>
           <Stack.Screen name="Main" component={MainTabs} />
           <Stack.Screen name="JoinOrg" component={JoinOrgScreen} />
+          <Stack.Screen name="Account" component={AccountScreen} />
         </>
       ) : (
         <>

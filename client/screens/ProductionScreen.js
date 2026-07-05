@@ -1,4 +1,5 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
+
 import {
   SafeAreaView,
   View,
@@ -42,13 +43,16 @@ const DEFAULT_LAYOUT = [
   },
 ];
 
-export default function ProductionScreen() {
+export default function ProductionScreen({ navigation }) {
+
   const { user, logout } = useAuth();
   const { activeAlerts, connected, sendAlert, clearAlert } = useAlerts(user);
   const [selectedButton, setSelectedButton] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [layout, setLayout] = useState(DEFAULT_LAYOUT);
   const [layoutLoading, setLayoutLoading] = useState(true);
+  const [menuVisible, setMenuVisible] = useState(false);
+
 
   useFocusEffect(
     useCallback(() => {
@@ -120,9 +124,42 @@ export default function ProductionScreen() {
               { backgroundColor: connected ? "#22c55e" : "#ef4444" },
             ]}
           />
-          <TouchableOpacity onPress={logout}>
+          <TouchableOpacity onPress={() => setMenuVisible(true)}>
             <Ionicons name="person-circle-outline" size={28} color="#888" />
           </TouchableOpacity>
+
+          {menuVisible && (
+            <TouchableOpacity
+              style={styles.menuOverlay}
+              activeOpacity={1}
+              onPress={() => setMenuVisible(false)}
+            >
+              <View style={styles.menu}>
+                <TouchableOpacity
+                  style={styles.menuItem}
+                  onPress={() => {
+                    setMenuVisible(false);
+                    navigation.navigate('Account');
+                  }}
+                >
+                  <Ionicons name="person-outline" size={18} color="#fff" />
+                  <Text style={styles.menuItemText}>Account Info</Text>
+                </TouchableOpacity>
+                <View style={styles.menuDivider} />
+                <TouchableOpacity
+                  style={styles.menuItem}
+                  onPress={() => {
+                    setMenuVisible(false);
+                    logout();
+                  }}
+                >
+                  <Ionicons name="log-out-outline" size={18} color="#ef4444" />
+                  <Text style={[styles.menuItemText, { color: '#ef4444' }]}>Log Out</Text>
+                </TouchableOpacity>
+              </View>
+            </TouchableOpacity>
+          )}
+
         </View>
       </View>
 
@@ -272,4 +309,39 @@ const styles = StyleSheet.create({
   actionButtonText: { color: "#fff", fontSize: 16, fontWeight: "600" },
   cancelButton: { padding: 16, alignItems: "center" },
   cancelText: { color: "#888", fontSize: 16 },
+
+  menuOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 100,
+  },
+  menu: {
+    position: 'absolute',
+    top: 60,
+    right: 16,
+    backgroundColor: '#1e1e2e',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#333',
+    minWidth: 160,
+    zIndex: 101,
+  },
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    padding: 14,
+  },
+  menuItemText: {
+    color: '#fff',
+    fontSize: 15,
+  },
+  menuDivider: {
+    height: 1,
+    backgroundColor: '#333',
+  },
+
 });
