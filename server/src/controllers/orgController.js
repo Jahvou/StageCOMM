@@ -27,6 +27,7 @@ const createOrg = async (req, res) => {
 // @route  POST /api/orgs/invite
 // @access Private
 const generateInvite = async (req, res) => {
+    console.log('generateInvite called, body:', req.body, 'user org:', req.user.org);
   try {
     const { email } = req.body;
 
@@ -112,4 +113,25 @@ const getMyOrg = async (req, res) => {
   }
 };
 
-module.exports = { createOrg, generateInvite, joinOrg, getMyOrg };
+// @route  DELETE /api/orgs/members/:memberId
+// @access Private
+const removeMember = async (req, res) => {
+  try {
+    const org = await Org.findById(req.user.org);
+    if (!org) {
+      return res.status(404).json({ message: 'Organisation not found' });
+    }
+
+    org.members = org.members.filter(
+      (m) => m._id.toString() !== req.params.memberId
+    );
+    await org.save();
+
+    res.status(200).json({ message: 'Member removed' });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+
+module.exports = { createOrg, generateInvite, joinOrg, getMyOrg, removeMember };
