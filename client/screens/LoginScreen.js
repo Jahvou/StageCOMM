@@ -1,39 +1,39 @@
 import { useState } from 'react';
 import {
-    SafeAreaView,
-    View,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    StyleSheet,
-    ActivityIndicator,
-    Alert,
+  SafeAreaView,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { useAuth } from '../hooks/useAuth';
 
 export default function LoginScreen({ navigation }) {
-    const { login } = useAuth();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-    const handleLogin = async () => {
-        if (!email || !password) {
-            Alert.alert('Error', 'Please fill in all fields');
-            return;
-        }
-        try {
-            setLoading(true);
-            await login(email, password);
-        } catch (err) {
-            Alert.alert('Login Failed', err.response?.data?.message || 'Something went wrong');
-        } finally {
-            setLoading(false);
-        }
-    };
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+    try {
+      setLoading(true);
+      await login(email, password);
+    } catch (err) {
+      Alert.alert('Login Failed', err.response?.data?.message || 'Something went wrong');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    return (
-        <SafeAreaView style={styles.container}>
+  return (
+    <SafeAreaView style={styles.container}>
       <View style={styles.inner}>
         <Text style={styles.title}>StageCOMM</Text>
         <Text style={styles.subtitle}>Sign in to your account</Text>
@@ -67,9 +67,13 @@ export default function LoginScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.navigate('Register')}>
           <Text style={styles.link}>Don't have an account? Register</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => navigation.navigate('JoinOrg')}>
+          <Text style={styles.link}>Have an invite token? Join Organisation</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
-    );
+  );
 }
 
 const styles = StyleSheet.create({
